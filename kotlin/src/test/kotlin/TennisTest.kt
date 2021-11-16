@@ -8,7 +8,7 @@ class TennisTest {
     @ParameterizedTest
     @MethodSource("allScores")
     fun checkAllScoresTennisGame1(player1Score: Int, player2Score: Int, expectedScore: String) {
-        val game = TennisGame1("player1", "player2")
+        val game = TennisGame1()
         checkAllScores(game, player1Score, player2Score, expectedScore)
     }
 
@@ -33,7 +33,7 @@ class TennisTest {
         checkAllScores(game, player1Score, player2Score, expectedScore)
     }
 
-    fun checkAllScores(game: TennisGame, player1Score: Int, player2Score: Int, expectedScore: String) {
+    private fun checkAllScores(game: TennisGame, player1Score: Int, player2Score: Int, expectedScore: String) {
         val highestScore = Math.max(player1Score, player2Score)
         for (i in 0 until highestScore) {
             if (i < player1Score)

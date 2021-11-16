@@ -1,51 +1,62 @@
-class TennisGame1(private val player1Name: String, private val player2Name: String) : TennisGame {
+class TennisGame1 : TennisGame {
 
-    private var m_score1: Int = 0
-    private var m_score2: Int = 0
+    private var playerOnePoints: Int = 0
+    private var playerTwoPoints: Int = 0
 
     override fun wonPoint(playerName: String) {
-        if (playerName === "player1")
-            m_score1 += 1
-        else
-            m_score2 += 1
-    }
+        if (playerName === "player1") playerOnePoints++ else playerTwoPoints++    }
 
     override fun getScore(): String {
-        var score = ""
-        var tempScore = 0
-        if (m_score1 == m_score2) {
-            when (m_score1) {
-                0 -> score = "Love-All"
-                1 -> score = "Fifteen-All"
-                2 -> score = "Thirty-All"
-                else -> score = "Deuce"
-            }
-        } else if (m_score1 >= 4 || m_score2 >= 4) {
-            val minusResult = m_score1 - m_score2
-            if (minusResult == 1)
-                score = "Advantage player1"
-            else if (minusResult == -1)
-                score = "Advantage player2"
-            else if (minusResult >= 2)
-                score = "Win for player1"
-            else
-                score = "Win for player2"
-        } else {
-            for (i in 1..2) {
-                if (i == 1)
-                    tempScore = m_score1
-                else {
-                    score += "-"
-                    tempScore = m_score2
-                }
-                when (tempScore) {
-                    0 -> score += "Love"
-                    1 -> score += "Fifteen"
-                    2 -> score += "Thirty"
-                    3 -> score += "Forty"
-                }
-            }
+        if (areTied()) {
+            return getScoreWhenAreTied()
         }
-        return score
+        return if (hasPlayersMoreThan3Points()) {
+            getScoreWhenPlayersHasMoreThan3Points()
+        } else {
+            getScoreWord(playerOnePoints) + "-" + getScoreWord(playerTwoPoints)
+        }
+
     }
+
+    private fun getScoreWhenPlayersHasMoreThan3Points(): String {
+        val minusResult = calculateDiffPoints()
+        return if (isPlayerOneWinningByOnePoint(minusResult))
+            "Advantage player1"
+        else if (isPlayerTwoWinningByTwoPoints(minusResult))
+            "Advantage player2"
+        else if (isPlayerOneWinningByTwoPoints(minusResult))
+            "Win for player1"
+        else
+            "Win for player2"
+    }
+
+    private fun getScoreWord(tempScore: Int): String {
+
+        return when (tempScore) {
+            0 -> "Love"
+            1 -> "Fifteen"
+            2 -> "Thirty"
+            else -> "Forty"
+        }
+
+    }
+
+    private fun isPlayerOneWinningByTwoPoints(minusResult: Int) = minusResult >= 2
+
+    private fun isPlayerTwoWinningByTwoPoints(minusResult: Int) = minusResult == -1
+
+    private fun isPlayerOneWinningByOnePoint(minusResult: Int) = minusResult == 1
+
+    private fun calculateDiffPoints() = playerOnePoints - playerTwoPoints
+
+    private fun hasPlayersMoreThan3Points() = playerOnePoints >= 4 || playerTwoPoints >= 4
+
+    private fun getScoreWhenAreTied() = when (playerOnePoints) {
+        0 -> "Love-All"
+        1 -> "Fifteen-All"
+        2 -> "Thirty-All"
+        else -> "Deuce"
+    }
+
+    private fun areTied() = playerOnePoints == playerTwoPoints
 }
